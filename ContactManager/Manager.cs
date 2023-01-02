@@ -80,19 +80,11 @@ namespace ContactManager
             LoadFile("contacts.xml");
         }
 
-        public void LoadFile(string fileName)
+        public void LoadFile(string fileName) // todo: error handeling
         {
             string extention = fileName.Split('.').Last();
-            
-            if (extention == "dat")
-            {
-                BinSerializer serializer = new BinSerializer();
-                _root = serializer.Desirialisation(fileName);
-            }
-            else
-            {
-                Console.WriteLine("xml not working yet!");
-            }
+            CMSerializer serializer = new CMSerializer();
+            _root = serializer.Deserialize(fileName);
         }
 
         /*****************************************************************************/
@@ -103,19 +95,10 @@ namespace ContactManager
             SaveFile("contacts.xml");
         }
 
-        public void SaveFile(string fileName)
+        public void SaveFile(string fileName) // todo: error handeling
         {
-            string extention = fileName.Split('.').Last();
-            
-            if (extention == "dat")
-            {
-                BinSerializer serializer = new BinSerializer();
-                serializer.Serialisation(_root, fileName);
-            }
-            else
-            {
-                Console.WriteLine("xml not working yet!");
-            }
+            CMSerializer serializer = new CMSerializer();
+            serializer.Serialize(_root, fileName);
         }
 
         /*****************************************************************************/

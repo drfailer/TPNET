@@ -17,48 +17,24 @@ namespace HierarchicalStructure
     {
         private List<Node> _childs;
         private string _name;
-        private string _id;
 
-        public string Name
-        {
-            get { return _name; }
-            set {
-                base.UpdateModificationDate();
-                if (Parent != null)
-                {
-                    _id = Parent.Id + value + "/";
-                }
-                else
-                {
-                    _id = value;
-                }
-                _name = value;
-            }
-        }
-
-        public string Id { get { return _id; } }
+        public string     Name   { get { return _name; }    set { base.UpdateModificationDate(); _name = value; } }
+        public List<Node> Childs {  get { return _childs; } set { _childs = value; } }
 
         /*****************************************************************************/
         public Folder(string name, Folder parent) : base(parent)
         {
             _childs = new List<Node>();
             this.Name = name;
-            if (parent != null)
-            {
-                _id = parent.Id + name + "/";
-            }
-            else
-            {
-                _id = name;
-            }
         }
 
         public Folder(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            Name = (string)info.GetValue("Name", typeof(string));
-            _id = (string)info.GetValue("id", typeof(string));
+            _name = (string)info.GetValue("Name", typeof(string));
             _childs = (List<Node>)info.GetValue("childs", typeof(List<Node>));
         }
+
+        public Folder() : base(null) { }
 
         /*****************************************************************************/
         /* Ajout des dossier et des contactes:
@@ -66,7 +42,7 @@ namespace HierarchicalStructure
          */
 
         public void AddChild(string name)
-        {
+        { // ajout d'un dossier si le nom est libre
             if (_childs.Find(x => x.GetType() == typeof(Folder) && ((Folder)x).Name == name) == null)
             {
                 _childs.Add(new Folder(name, this));
@@ -82,19 +58,6 @@ namespace HierarchicalStructure
             _childs.Insert(0, new Contact(name, firstName, mail, company, link, this));
         }
 
-        // Pour la sérialisation
-
-        public void AddChild(Folder newFolder)
-        {
-            _childs.Add(newFolder);
-        }
-
-
-/*        public void AddContact(string value)
-        {
-            _childs.Insert(0, new Contact(value, this));
-        }
-*/
         /* Accessors */
 
         public Folder GetParent()
@@ -156,7 +119,6 @@ namespace HierarchicalStructure
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("Name", Name);
-            info.AddValue("id", Id);
             info.AddValue("childs", _childs);
             base.GetObjectData(info, context);
         }

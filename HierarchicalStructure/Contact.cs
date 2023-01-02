@@ -26,15 +26,12 @@ namespace HierarchicalStructure
         private string _mail;
         private string _company;
         private Links _link;
-        private int _id;
-        private static int _counter = 0; // id builder
 
-        public string Name { get { return _name; } set { base.UpdateModificationDate(); _name = value; } }
+        public string Name      { get { return _name; }      set { base.UpdateModificationDate(); _name = value; } }
         public string FirstName { get { return _firstName; } set { base.UpdateModificationDate(); _firstName = value; } }
-        public string Mail { get { return _mail; } set { _mail = ValidateMail(value); } }
-        public string Company { get { return _company; } set { base.UpdateModificationDate(); _company = value; } }
-        public Links Link { get { return _link; } set { base.UpdateModificationDate(); _link = value; } }
-        public int Id { get { return _id; } }
+        public string Mail      { get { return _mail; }      set { _mail = ValidateMail(value); } }
+        public string Company   { get { return _company; }   set { base.UpdateModificationDate(); _company = value; } }
+        public Links  Link      { get { return _link; }      set { base.UpdateModificationDate(); _link = value; } }
 
         /*****************************************************************************/
 
@@ -44,8 +41,6 @@ namespace HierarchicalStructure
             _firstName = firstName;
             _company = company;
             _link = ToLinks(link);
-            _id = _counter;
-            _counter++;
 
             try
             {
@@ -61,13 +56,14 @@ namespace HierarchicalStructure
         // constructeur pour deserialisation
         public Contact(SerializationInfo info, StreamingContext context): base(info, context)
         {
-            Name = (string)info.GetValue("Name", typeof(string));
-            FirstName = (string)info.GetValue("firstName", typeof(string));
-            Mail = (string)info.GetValue("mail", typeof(string));
-            Company = (string)info.GetValue("company", typeof(string));
-            Link = (Links)info.GetValue("link", typeof(Links));
-            _id = (int)info.GetValue("id", typeof(int));
+            _name = (string)info.GetValue("Name", typeof(string));
+            _firstName = (string)info.GetValue("firstName", typeof(string));
+            _mail = (string)info.GetValue("mail", typeof(string));
+            _company = (string)info.GetValue("company", typeof(string));
+            _link = (Links)info.GetValue("link", typeof(Links));
         }
+
+        public Contact() : base(null) { }
 
         /*****************************************************************************/
 
@@ -144,7 +140,6 @@ namespace HierarchicalStructure
             info.AddValue("mail", Mail);
             info.AddValue("company", Company);
             info.AddValue("link", Link);
-            info.AddValue("id", Id);
             base.GetObjectData(info, context);
         }
 

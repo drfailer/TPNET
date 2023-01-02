@@ -11,9 +11,10 @@ namespace TPNET
     {
         static void Main(string[] args)
         {
-            Menu menu = new Menu();
-            menu.Run();
-/*            Manager m = new Manager();
+            /*            Menu menu = new Menu();
+                        menu.Run();
+            */
+            Manager m = new Manager();
             m.AddFolder("test");
             m.AddFolder("school");
             m.AddContact("test", "test", "test.test@gmail.com", "WD", "Friend");
@@ -27,11 +28,11 @@ namespace TPNET
             m.AddContact("d", "d", "d.d@gmail.com", "WD", "Collegue");
 
             Console.WriteLine("saving file");
-            m.SaveFile("test.dat");
+            m.SaveFile("test.xml");
 
             Manager m2 = new Manager();
-            m2.LoadFile("test.dat");
+            m2.LoadFile("test.xml");
             m2.Display();
-*/        }
+        }
     }
 }

@@ -5,15 +5,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Xml.Serialization;
 
 namespace HierarchicalStructure
 {
+    [XmlInclude(typeof(Folder))]
+    [XmlInclude(typeof(Contact))]
     [Serializable()]
     public abstract class Node: ISerializable
     {
         protected DateTime CreationDate { get; set; }
         protected DateTime ModificationDate { get; set; }
         protected Folder Parent { get; set; }
+        public string NodeID { get; set; }
         // NOTE: je considère que le nom d'une personne est différent d'un Nom
         // de dossier (même nom, même type mais c'est pas vraiment la même chose
         // puisqu'un nom de personne ne sert à rien sans le prenom). Donc je ne
@@ -25,6 +29,8 @@ namespace HierarchicalStructure
             ModificationDate = DateTime.Now;
             Parent = parent;
         }
+
+        // protected Node() { }
 
         protected Node(SerializationInfo info, StreamingContext context)
         {
