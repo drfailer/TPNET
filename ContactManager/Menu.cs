@@ -66,39 +66,13 @@ namespace ContactManager
             }
         }
 
-        private Links ToLinks(string s)
-        {
-            Links link = Links.None;
-
-            switch (s)
-            {
-                case "Friend":
-                    link = Links.Friend;
-                    break;
-                case "Collegue":
-                    link = Links.Collegue;
-                    break;
-                case "Relation":
-                    link = Links.Relation;
-                    break;
-                case "Network":
-                    link = Links.Network;
-                    break;
-                default:
-                    Console.WriteLine("Error: invalid link, will be None bay default.");
-                    break;
-            }
-
-            return link;
-        }
-
         private void RunNew(string[] command)
         {
             string name;
             string firstname;
             string mail;
             string company;
-            Links link;
+            string link;
 
             if (command.Length == 1)
             { // mode interactif
@@ -115,7 +89,7 @@ namespace ContactManager
                 company = Console.ReadLine();
 
                 Console.Write("link: ");
-                link = ToLinks(Console.ReadLine());
+                link = Console.ReadLine();
 
                 manager.AddContact(name, firstname, mail, company, link);
             }
@@ -125,7 +99,7 @@ namespace ContactManager
                 firstname = command[2];
                 mail = command[3];
                 company = command[4];
-                link = ToLinks(command[5]);
+                link = command[5];
                 manager.AddContact(name, firstname, mail, company, link);
             }
             else

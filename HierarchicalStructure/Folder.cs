@@ -2,27 +2,62 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Markup;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Reflection;
 
 namespace HierarchicalStructure
 {
-    public class Folder : Node
+    [Serializable()]
+    public class Folder : Node, ISerializable
     {
         private List<Node> _childs;
         private string _name;
+        private string _id;
 
         public string Name
         {
             get { return _name; }
-            set { base.UpdateModificationDate(); _name = value; }
+            set {
+                base.UpdateModificationDate();
+                if (Parent != null)
+                {
+                    _id = Parent.Id + value + "/";
+                }
+                else
+                {
+                    _id = value;
+                }
+                _name = value;
+            }
         }
+
+        public string Id { get { return _id; } }
 
         /*****************************************************************************/
         public Folder(string name, Folder parent) : base(parent)
         {
             _childs = new List<Node>();
             this.Name = name;
+            if (parent != null)
+            {
+                _id = parent.Id + name + "/";
+            }
+            else
+            {
+                _id = name;
+            }
+        }
+
+        public Folder(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            Name = (string)info.GetValue("Name", typeof(string));
+            _id = (string)info.GetValue("id", typeof(string));
+            _childs = (List<Node>)info.GetValue("childs", typeof(List<Node>));
         }
 
         /*****************************************************************************/
@@ -32,14 +67,34 @@ namespace HierarchicalStructure
 
         public void AddChild(string name)
         {
-            _childs.Add(new Folder(name, this));
+            if (_childs.Find(x => x.GetType() == typeof(Folder) && ((Folder)x).Name == name) == null)
+            {
+                _childs.Add(new Folder(name, this));
+            }
+            else
+            {
+                throw new InvalidOperationException(name + " already exists.");
+            }
         }
 
-        public void AddChild(string name, string firstName, string mail, string company, Links link)
+        public void AddChild(string name, string firstName, string mail, string company, string link)
         {
             _childs.Insert(0, new Contact(name, firstName, mail, company, link, this));
         }
 
+        // Pour la sérialisation
+
+        public void AddChild(Folder newFolder)
+        {
+            _childs.Add(newFolder);
+        }
+
+
+/*        public void AddContact(string value)
+        {
+            _childs.Insert(0, new Contact(value, this));
+        }
+*/
         /* Accessors */
 
         public Folder GetParent()
@@ -63,6 +118,11 @@ namespace HierarchicalStructure
                 Console.WriteLine(e.Message);
                 throw new InvalidOperationException(name + " is not a valid folder name."); 
             }
+        }
+
+        public List<Node> GetChilds() // requis pour serialisation
+        {
+            return _childs;
         }
 
         /*****************************************************************************/
@@ -90,7 +150,15 @@ namespace HierarchicalStructure
 
         public override string ToString()
         {
-            return base.ToString() + " - " + Name;
+            return Name + " - " + base.ToString();
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Name", Name);
+            info.AddValue("id", Id);
+            info.AddValue("childs", _childs);
+            base.GetObjectData(info, context);
         }
     }
 }

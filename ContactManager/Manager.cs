@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design.Serialization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HierarchicalStructure;
+using Serializer;
 
 namespace ContactManager
 {
-    internal class Manager
+    public class Manager
     {
         private Folder _root;
         private Folder CurrentFolder { get; set; }
@@ -23,10 +25,17 @@ namespace ContactManager
 
         public void AddFolder(string name)
         {
-            CurrentFolder.AddChild(name);
+            try
+            {
+                CurrentFolder.AddChild(name);
+            }
+            catch (InvalidOperationException e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
-        public void AddContact(string name, string firstName, string mail, string company, Links link)
+        public void AddContact(string name, string firstName, string mail, string company, string link)
         {
             CurrentFolder.AddChild(name, firstName, mail, company, link);
         }
@@ -73,7 +82,17 @@ namespace ContactManager
 
         public void LoadFile(string fileName)
         {
-            throw new NotImplementedException();
+            string extention = fileName.Split('.').Last();
+            
+            if (extention == "dat")
+            {
+                BinSerializer serializer = new BinSerializer();
+                _root = serializer.Desirialisation(fileName);
+            }
+            else
+            {
+                Console.WriteLine("xml not working yet!");
+            }
         }
 
         /*****************************************************************************/
@@ -86,7 +105,17 @@ namespace ContactManager
 
         public void SaveFile(string fileName)
         {
-            throw new NotImplementedException();
+            string extention = fileName.Split('.').Last();
+            
+            if (extention == "dat")
+            {
+                BinSerializer serializer = new BinSerializer();
+                serializer.Serialisation(_root, fileName);
+            }
+            else
+            {
+                Console.WriteLine("xml not working yet!");
+            }
         }
 
         /*****************************************************************************/

@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace HierarchicalStructure
 {
-    public abstract class Node
+    [Serializable()]
+    public abstract class Node: ISerializable
     {
-        private DateTime _creationDate;
-        private DateTime _modificationDate;
+        protected DateTime CreationDate { get; set; }
+        protected DateTime ModificationDate { get; set; }
         protected Folder Parent { get; set; }
         // NOTE: je considère que le nom d'une personne est différent d'un Nom
         // de dossier (même nom, même type mais c'est pas vraiment la même chose
@@ -18,27 +21,21 @@ namespace HierarchicalStructure
 
         protected Node(Folder parent)
         {
-            _creationDate = DateTime.Now;
-            _modificationDate = DateTime.Now;
+            CreationDate = DateTime.Now;
+            ModificationDate = DateTime.Now;
             Parent = parent;
+        }
+
+        protected Node(SerializationInfo info, StreamingContext context)
+        {
+            CreationDate = (DateTime) info.GetValue("creationDate", typeof(DateTime));
+            ModificationDate = (DateTime) info.GetValue("modificationDate", typeof(DateTime));
+            Parent = (Folder) info.GetValue("parent", typeof(Folder));
         }
 
         protected void UpdateModificationDate()
         {
-            _modificationDate = DateTime.Now;
-        }
-
-        /*****************************************************************************/
-        /* Getters */
-
-        protected DateTime GetCreationDate()
-        {
-            return _creationDate;
-        }
-
-        protected DateTime GetModificationDate()
-        {
-            return _modificationDate;
+            ModificationDate = DateTime.Now;
         }
 
         /*****************************************************************************/
@@ -58,7 +55,16 @@ namespace HierarchicalStructure
 
         public override string ToString()
         {
-            return "[" + _creationDate + ", " + _modificationDate + "]";
+            return "[" + CreationDate + ", " + ModificationDate + "]";
+        }
+
+        /*****************************************************************************/
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("creationDate", CreationDate);
+            info.AddValue("modificationDate", ModificationDate);
+            info.AddValue("parent", Parent);
         }
     }
 }

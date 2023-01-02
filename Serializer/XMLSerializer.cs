@@ -7,10 +7,7 @@ using HierarchicalStructure;
 
 namespace Serializer
 {
-    internal class XMLSerializer
+    public class XMLSerializer
     {
-        static void Main(string[] args)
-        {
-        }
     }
 }
