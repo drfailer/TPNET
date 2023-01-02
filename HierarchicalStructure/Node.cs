@@ -14,8 +14,11 @@ namespace HierarchicalStructure
     [Serializable()]
     public abstract class Node: ISerializable
     {
-        protected DateTime CreationDate { get; set; }
-        protected DateTime ModificationDate { get; set; }
+        private DateTime _creationDate;
+        private DateTime _modificationDate;
+
+        protected DateTime CreationDate { get { return _creationDate; } }
+        protected DateTime ModificationDate { get { return _modificationDate; } }
         protected Folder Parent { get; set; }
         public string NodeID { get; set; }
         // NOTE: je considère que le nom d'une personne est différent d'un Nom
@@ -25,8 +28,8 @@ namespace HierarchicalStructure
 
         protected Node(Folder parent)
         {
-            CreationDate = DateTime.Now;
-            ModificationDate = DateTime.Now;
+            _creationDate = DateTime.Now;
+            _modificationDate = DateTime.Now;
             Parent = parent;
         }
 
@@ -34,14 +37,14 @@ namespace HierarchicalStructure
 
         protected Node(SerializationInfo info, StreamingContext context)
         {
-            CreationDate = (DateTime) info.GetValue("creationDate", typeof(DateTime));
-            ModificationDate = (DateTime) info.GetValue("modificationDate", typeof(DateTime));
+            _creationDate = (DateTime) info.GetValue("creationDate", typeof(DateTime));
+            _modificationDate = (DateTime) info.GetValue("modificationDate", typeof(DateTime));
             Parent = (Folder) info.GetValue("parent", typeof(Folder));
         }
 
         protected void UpdateModificationDate()
         {
-            ModificationDate = DateTime.Now;
+            _modificationDate = DateTime.Now;
         }
 
         /*****************************************************************************/
@@ -61,15 +64,15 @@ namespace HierarchicalStructure
 
         public override string ToString()
         {
-            return "[" + CreationDate + ", " + ModificationDate + "]";
+            return "[" + _creationDate + ", " + _modificationDate + "]";
         }
 
         /*****************************************************************************/
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("creationDate", CreationDate);
-            info.AddValue("modificationDate", ModificationDate);
+            info.AddValue("creationDate", _creationDate);
+            info.AddValue("modificationDate", _modificationDate);
             info.AddValue("parent", Parent);
         }
     }

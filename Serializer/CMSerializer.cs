@@ -16,6 +16,11 @@ namespace Serializer
     {
         public CMSerializer() { }
 
+        /*****************************************************************************/
+        /* fonctions de seraialisation et de deserialisation publiques qui utilise les
+         * bonnes methodes en fonction du type de fichier demandé
+         */
+
         public void Serialize(Folder root, string fileName)
         {
             string extention = fileName.Split('.').Last();

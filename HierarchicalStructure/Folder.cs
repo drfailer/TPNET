@@ -17,7 +17,6 @@ namespace HierarchicalStructure
     {
         private List<Node> _childs;
         private string _name;
-
         public string     Name   { get { return _name; }    set { base.UpdateModificationDate(); _name = value; } }
         public List<Node> Childs {  get { return _childs; } set { _childs = value; } }
 
@@ -58,6 +57,7 @@ namespace HierarchicalStructure
             _childs.Insert(0, new Contact(name, firstName, mail, company, link, this));
         }
 
+        /*****************************************************************************/
         /* Accessors */
 
         public Folder GetParent()
@@ -81,11 +81,6 @@ namespace HierarchicalStructure
                 Console.WriteLine(e.Message);
                 throw new InvalidOperationException(name + " is not a valid folder name."); 
             }
-        }
-
-        public List<Node> GetChilds() // requis pour serialisation
-        {
-            return _childs;
         }
 
         /*****************************************************************************/
@@ -115,6 +110,9 @@ namespace HierarchicalStructure
         {
             return Name + " - " + base.ToString();
         }
+
+        /*****************************************************************************/
+        // sérialisation
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
