@@ -19,6 +19,7 @@ namespace HierarchicalStructure
 
         protected DateTime CreationDate { get { return _creationDate; } }
         protected DateTime ModificationDate { get { return _modificationDate; } }
+        [XmlIgnore]
         protected Folder Parent { get; set; }
         public string NodeID { get; set; }
         // NOTE: je considère que le nom d'une personne est différent d'un Nom
@@ -74,6 +75,11 @@ namespace HierarchicalStructure
             info.AddValue("creationDate", _creationDate);
             info.AddValue("modificationDate", _modificationDate);
             info.AddValue("parent", Parent);
+        }
+
+        public void UpdateParent(Folder parent)
+        {
+            Parent = parent;
         }
     }
 }

@@ -25,28 +25,44 @@ namespace Serializer
         {
             string extention = fileName.Split('.').Last();
 
-            if (extention == "dat")
+            try
             {
-                SerializeBin(root, fileName);
+                if (extention == "dat")
+                {
+                    SerializeBin(root, fileName);
+                }
+                else
+                {
+                    SerializeXML(root, fileName);
+                }
             }
-            else
+            catch (Exception e)
             {
-                SerializeXML(root, fileName);
+                Console.WriteLine(e.Message);
+                throw new Exception();
             }
         }
 
         public Folder Deserialize(string fileName)
         {
             string extention = fileName.Split('.').Last();
-            Folder root;
+            Folder root = null;
 
-            if (extention == "dat")
+            try
             {
-                root = DeserializeBin(fileName);
+                if (extention == "dat")
+                {
+                    root = DeserializeBin(fileName);
+                }
+                else
+                {
+                    root = DeserializeXML(fileName);
+                }
             }
-            else
+            catch (Exception e)
             {
-                root = DeserializeXML(fileName);
+                Console.WriteLine(e.Message);
+                throw new Exception();
             }
             return root;
         }
@@ -64,7 +80,7 @@ namespace Serializer
 
         private Folder DeserializeBin(string fileName)
         {
-            Folder root;
+            Folder root = null;
             Stream stream = File.Open(fileName, FileMode.Open);
             BinaryFormatter bf = new BinaryFormatter();
             root = (Folder)bf.Deserialize(stream);
@@ -78,7 +94,7 @@ namespace Serializer
         private void SerializeXML(Folder root, string fileName)
         {
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(Node));
-            TextWriter tw = new StreamWriter(@"C:\Users\Megaport\Documents\" + fileName);
+            TextWriter tw = new StreamWriter(@"C:\Users\rechassagn1\Documents" + fileName);
             xmlSerializer.Serialize(tw, root);
             tw.Close();
         }
@@ -87,9 +103,10 @@ namespace Serializer
         {
             Folder root;
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(Node));
-            TextReader tr = new StreamReader(@"C:\Users\Megaport\Documents\" + fileName);
+            TextReader tr = new StreamReader(@"C:\Users\rechassagn1\Documents" + fileName);
             root = (Folder)xmlSerializer.Deserialize(tr);
             tr.Close();
+            root.UpdateParent();
             return root;
         }
     }

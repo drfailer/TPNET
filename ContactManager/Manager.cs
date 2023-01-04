@@ -82,9 +82,17 @@ namespace ContactManager
 
         public void LoadFile(string fileName) // todo: error handeling
         {
-            string extention = fileName.Split('.').Last();
-            CMSerializer serializer = new CMSerializer();
-            _root = serializer.Deserialize(fileName);
+            try
+            {
+                string extention = fileName.Split('.').Last();
+                CMSerializer serializer = new CMSerializer();
+                _root = serializer.Deserialize(fileName);
+                CurrentFolder = _root;
+            }
+            catch
+            {
+                Console.WriteLine("EREUR: impossible de charger le fichier.");
+            }
         }
 
         /*****************************************************************************/
@@ -97,8 +105,16 @@ namespace ContactManager
 
         public void SaveFile(string fileName) // todo: error handeling
         {
-            CMSerializer serializer = new CMSerializer();
-            serializer.Serialize(_root, fileName);
+            try
+            {
+                CMSerializer serializer = new CMSerializer();
+                serializer.Serialize(_root, fileName);
+            }
+            catch
+            {
+                Console.WriteLine("ERREUR: impossible de sauvegarder le fichier.");
+            }
+            
         }
 
         /*****************************************************************************/

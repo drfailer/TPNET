@@ -9,6 +9,9 @@ using System.Windows.Markup;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Reflection;
+using System.Xml.Serialization;
+using System.Xml.Schema;
+using System.Xml;
 
 namespace HierarchicalStructure
 {
@@ -119,6 +122,22 @@ namespace HierarchicalStructure
             info.AddValue("Name", Name);
             info.AddValue("childs", _childs);
             base.GetObjectData(info, context);
+        }
+
+        public void UpdateParent()
+        {
+            _childs.ForEach(n =>
+            {
+                if (n.GetType() == typeof(Contact))
+                {
+                    n.UpdateParent(this);
+                }
+                else
+                {
+                    n.UpdateParent(this);
+                    ((Folder)n).UpdateParent();
+                }
+            });
         }
     }
 }
