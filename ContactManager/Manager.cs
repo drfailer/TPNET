@@ -67,7 +67,14 @@ namespace ContactManager
             }
         }
 
+        // TODO
         public void EditContact(string contactName)
+        {
+            throw new NotImplementedException();
+        }
+
+        // TODO: remove a contact or a folder (recursive !)
+        public void RemoveElement(string name)
         {
             throw new NotImplementedException();
         }
@@ -75,18 +82,18 @@ namespace ContactManager
         /*****************************************************************************/
         /* Chargement de fichier */
 
-        public void LoadFile()
+        public void LoadFile(string key)
         {
-            LoadFile("contacts.xml");
+            LoadFile("contacts.xml", key);
         }
 
-        public void LoadFile(string fileName) // todo: error handeling
+        public void LoadFile(string fileName, string key) // todo: error handeling
         {
             try
             {
                 string extention = fileName.Split('.').Last();
                 CMSerializer serializer = new CMSerializer();
-                _root = serializer.Deserialize(fileName);
+                _root = serializer.Deserialize(fileName, key);
                 CurrentFolder = _root;
             }
             catch
@@ -98,17 +105,17 @@ namespace ContactManager
         /*****************************************************************************/
         /* Sauvegarde de fichiers */
 
-        public void SaveFile()
+        public void SaveFile(string key)
         {
-            SaveFile("contacts.xml");
+            SaveFile("contacts.xml", key);
         }
 
-        public void SaveFile(string fileName) // todo: error handeling
+        public void SaveFile(string fileName, string key) // todo: error handeling
         {
             try
             {
                 CMSerializer serializer = new CMSerializer();
-                serializer.Serialize(_root, fileName);
+                serializer.Serialize(_root, fileName, key);
             }
             catch
             {

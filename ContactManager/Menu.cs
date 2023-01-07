@@ -23,6 +23,7 @@ namespace ContactManager
             Console.WriteLine("mkdir <folder_name> - new folder folder.");
             Console.WriteLine("new <contact info>  - add new contact (interative if no parameters given).");
             Console.WriteLine("edit <name>         - edit a contact or a folder.");
+            Console.WriteLine("rm <name>           - remove a contact or a folder.");
             Console.WriteLine("save <file_name>    - save contact in a file (contacts.xml by default).");
             Console.WriteLine("load <file_name>    - load contact from a file (contacts.xml by default).");
             Console.WriteLine("clear               - clear the screen.");
@@ -44,25 +45,29 @@ namespace ContactManager
 
         private void RunSave(string[] command)
         {
+            Console.Write("key: ");
+            string key = Console.ReadLine();
             if (command.Length == 2)
             {
-                manager.SaveFile(command[1]);
+                manager.SaveFile(command[1], key);
             }
             else
             {
-                manager.SaveFile();
+                manager.SaveFile(key);
             }
         }
 
         private void RunLoad(string[] command)
         {
+            Console.Write("key: ");
+            string key = Console.ReadLine();
             if (command.Length == 2)
             {
-                manager.LoadFile(command[1]);
+                manager.LoadFile(command[1], key);
             }
             else
             {
-                manager.LoadFile();
+                manager.LoadFile(key);
             }
         }
 
@@ -142,6 +147,9 @@ namespace ContactManager
                         break;
                     case "edit":
                         RunCommand(command, manager.EditContact, "Error: you must specify the name of an existing contact.");
+                        break;
+                    case "rm":
+                        RunCommand(command, manager.RemoveElement, "Error: you must specify the name of an existing contact.");
                         break;
                     case "save":
                         RunSave(command);
