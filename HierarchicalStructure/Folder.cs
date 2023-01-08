@@ -102,9 +102,8 @@ namespace HierarchicalStructure
         /* Liste le contenu d'un dossier */
         public void ListContent()
         {
-            Console.WriteLine("\u250C " + this.ToString());
-            _childs.ForEach(x => Console.WriteLine("\u2502 " + x.ToString()));
-            Console.WriteLine("\u2514\u2500\u2500");
+            Console.WriteLine(this.ToString());
+            _childs.ForEach(x => Console.WriteLine(x.ToString()));
         }
 
         /*****************************************************************************/
