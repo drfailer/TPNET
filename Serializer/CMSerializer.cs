@@ -15,6 +15,9 @@ namespace Serializer
 {
     public class CMSerializer
     {
+        private delegate void SerializeMethod(CryptoStream cs, Folder folder);
+        private delegate Folder DeserializeMethod(CryptoStream cs);
+
         public CMSerializer() { }
 
         /*****************************************************************************/
@@ -33,14 +36,16 @@ namespace Serializer
                 byte[] hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(key));
                 Array.Resize(ref hash, 16);
                 byte[] bkey = hash;
-                byte[] biv = hash; // WARNING: j'ai pas bien compris comment bien gérer le vecteur d'initialisation
+
                 if (extention == "dat")
                 {
-                    SerializeBin(root, fileName, bkey, biv);
+                    // SerializeBin(root, fileName, bkey);
+                    SecureSerialize(root, fileName, bkey, BinarySerializer);
                 }
                 else
                 {
-                    SerializeXML(root, fileName, bkey, biv);
+                    // SerializeXML(root, fileName, bkey);
+                    SecureSerialize(root, fileName, bkey, XMLSerializer);
                 }
             }
             catch (Exception e)
@@ -62,14 +67,16 @@ namespace Serializer
                 byte[] hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(key));
                 Array.Resize(ref hash, 16);
                 byte[] bkey = hash;
-                byte[] biv = hash; // WARNING: j'ai pas bien compris comment bien gérer le vecteur d'initialisation
+
                 if (extention == "dat")
                 {
-                    root = DeserializeBin(fileName, bkey, biv);
+                    // root = DeserializeBin(fileName, bkey);
+                    root = SecureDeserialize(fileName, bkey, BinaryDeserializer);
                 }
                 else
                 {
-                    root = DeserializeXML(fileName, bkey, biv);
+                    // root = DeserializeXML(fileName, bkey);
+                    root = SecureDeserialize(fileName, bkey, XMLDeserializer);
                 }
             }
             catch (Exception e)
@@ -81,43 +88,42 @@ namespace Serializer
         }
 
         /*****************************************************************************/
-        // Sérialisation binaire
+        // Sérialisation et deserialisation sécurisée
 
-        private void SerializeBin(Folder root, string fileName, byte[] key, byte[] iv)
+        private void SecureSerialize(Folder root, string fileName, byte[] key, SerializeMethod serializer)
         {
-
             using (Aes aes = Aes.Create())
             {
                 aes.Key = key;
-                aes.IV = iv;
 
                 using (FileStream fs = File.Open(@"C:\Users\Megaport\Documents\" + fileName, FileMode.Create))
                 {
+                    fs.Write(aes.IV, 0, aes.IV.Length); // sauvegarde du vecteur d'initialisation en debut de fichier
                     using (CryptoStream csEncrypt = new CryptoStream(fs, aes.CreateEncryptor(), CryptoStreamMode.Write))
                     {
-                        BinaryFormatter bf = new BinaryFormatter();
-                        bf.Serialize(csEncrypt, root);
+                        serializer(csEncrypt, root);
                     }
                 }
             }
         }
 
-        private Folder DeserializeBin(string fileName, byte[] key, byte[] iv)
+        private Folder SecureDeserialize(string fileName, byte[] key, DeserializeMethod deserializer)
         {
             Folder root = null;
 
             using (Aes aes = Aes.Create())
             {
                 aes.Key = key;
-                aes.IV = iv;
 
                 using (FileStream fs = File.Open(@"C:\Users\Megaport\Documents\" + fileName, FileMode.Open))
                 {
+                    // récupération du vecteur d'initialisation utilisé au chiffrement
+                    byte[] buff = new byte[aes.IV.Length];
+                    fs.Read(buff, 0, aes.IV.Length);
+                    aes.IV = buff;
                     using (CryptoStream csDecrypt = new CryptoStream(fs, aes.CreateDecryptor(aes.Key, aes.IV), CryptoStreamMode.Read))
                     {
-                        BinaryFormatter bf = new BinaryFormatter();
-                        root = (Folder)bf.Deserialize(csDecrypt);
-                        root.UpdateParent();
+                        root = deserializer(csDecrypt);
                     }
                 }
             }
@@ -125,45 +131,38 @@ namespace Serializer
         }
 
         /*****************************************************************************/
-        // sérialisation XML
+        /* Binary seralizer and deserializer */
 
-        private void SerializeXML(Folder root, string fileName, byte[] key, byte[] iv)
+        private void BinarySerializer(CryptoStream cs, Folder folder)
         {
-            using (Aes aes = Aes.Create())
-            {
-                aes.Key = key;
-                aes.IV = iv;
-
-                using (FileStream fs = File.Open(@"C:\Users\Megaport\Documents\" + fileName, FileMode.Create))
-                {
-                    using (CryptoStream csEncrypt = new CryptoStream(fs, aes.CreateEncryptor(), CryptoStreamMode.Write))
-                    {
-                        XmlSerializer xmlSerializer = new XmlSerializer(typeof(Node));
-                        xmlSerializer.Serialize(csEncrypt, root);
-                    }
-                }
-            }
+            BinaryFormatter bf = new BinaryFormatter();
+            bf.Serialize(cs, folder);
         }
 
-        private Folder DeserializeXML(string fileName, byte[] key, byte[] iv)
+        private Folder BinaryDeserializer(CryptoStream cs)
         {
             Folder root;
+            BinaryFormatter bf = new BinaryFormatter();
+            root = (Folder)bf.Deserialize(cs);
+            // root.UpdateParent();
+            return root;
+        }
 
-            using (Aes aes = Aes.Create())
-            {
-                aes.Key = key;
-                aes.IV = iv;
+        /*****************************************************************************/
+        /* XML seralizer and deserializer */
 
-                using (FileStream fs = File.Open(@"C:\Users\Megaport\Documents\" + fileName, FileMode.Open))
-                {
-                    using (CryptoStream csDecrypt = new CryptoStream(fs, aes.CreateDecryptor(aes.Key, aes.IV), CryptoStreamMode.Read))
-                    {
-                        XmlSerializer xmlSerializer = new XmlSerializer(typeof(Node));
-                        root = (Folder)xmlSerializer.Deserialize(csDecrypt);
-                        root.UpdateParent();
-                    }
-                }
-            }
+        private void XMLSerializer(CryptoStream cs, Folder folder)
+        {
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(Node));
+            xmlSerializer.Serialize(cs, folder);
+        }
+
+        private Folder XMLDeserializer(CryptoStream cs)
+        {
+            Folder root;
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(Node));
+            root = (Folder)xmlSerializer.Deserialize(cs);
+            root.UpdateParent(); // ici, on doit mettre à jour les parent à la main
             return root;
         }
     }
