@@ -21,7 +21,7 @@ namespace HierarchicalStructure
         public List<Folder> SubFolders { get; set; }
         public List<Contact> Contacts { get; set; }
         private string _name;
-        public string     Name   { get { return _name; }    set { base.UpdateModificationDate(); _name = value; } }
+        public string Name { get { return _name; } set { base.UpdateModificationDate(); _name = value; } }
 
         /*****************************************************************************/
         public Folder(string name, Folder parent) : base(parent)
@@ -73,12 +73,43 @@ namespace HierarchicalStructure
 
         public void RemoveChild(string name)
         {
-            // TODO
+            try
+            {
+                SubFolders.RemoveAll(x => x.Name == name);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         public void RemoveChild(string name, string firstName)
         {
+            try
+            {
+                Contacts.RemoveAll(x => x.Name == name && x.FirstName == firstName);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
 
+        // permet la modification d'un contact (les nouveau champs doivent être non vides)
+        public void EditElement(string originalName, string originalFirstName,
+            string name, string firstName, string mail, string company, string link)
+        {
+            Contact contact = Contacts.Find(x => x.Name == originalFirstName && x.FirstName == originalFirstName);
+            if (name.Length != 0)
+                contact.Name = name;
+            if (firstName.Length != 0)
+                contact.FirstName = firstName;
+            if (mail.Length != 0)
+                contact.Mail = mail;
+            if (company.Length != 0)
+                contact.Company = company;
+            if (link.Length != 0)
+                contact.Link = Contact.ToLinks(link);
         }
 
         /*****************************************************************************/

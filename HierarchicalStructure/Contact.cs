@@ -68,7 +68,7 @@ namespace HierarchicalStructure
         /*****************************************************************************/
 
         // création d'un lien à partir d'un string
-        private Links ToLinks(string s)
+        public static Links ToLinks(string s)
         {
             Links link = Links.None;
 

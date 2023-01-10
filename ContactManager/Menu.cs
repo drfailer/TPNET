@@ -16,19 +16,19 @@ namespace ContactManager
         {
             Console.Clear();
             Console.WriteLine("---------------------------- Contact Manager ----------------------------");
-            Console.WriteLine("ls                  - list folder content.");
-            Console.WriteLine("tree                - list all the hierarchy.");
-            Console.WriteLine("cd <folder_name>    - change folder.");
-            Console.WriteLine("up                  - go in the parent folder.");
-            Console.WriteLine("mkdir <folder_name> - new folder folder.");
-            Console.WriteLine("new <contact info>  - add new contact (interative if no parameters given).");
-            Console.WriteLine("edit <name>         - edit a contact or a folder.");
-            Console.WriteLine("rm <name>           - remove a contact or a folder.");
-            Console.WriteLine("save <file_name>    - save contact in a file (contacts.xml by default).");
-            Console.WriteLine("load <file_name>    - load contact from a file (contacts.xml by default).");
-            Console.WriteLine("clear               - clear the screen.");
-            Console.WriteLine("quit | exit         - quitter.");
-            Console.WriteLine("help                - show this message.");
+            Console.WriteLine("ls                           - list folder content.");
+            Console.WriteLine("tree                         - list all the hierarchy.");
+            Console.WriteLine("cd <folder_name>             - change folder.");
+            Console.WriteLine("up                           - go in the parent folder.");
+            Console.WriteLine("mkdir <folder_name>          - new folder folder.");
+            Console.WriteLine("new <contact info>           - add new contact (interative if no parameters given).");
+            Console.WriteLine("edit <name>                  - edit a contact or a folder.");
+            Console.WriteLine("rm <name>|<name> <firstname> - remove a contact or a folder.");
+            Console.WriteLine("save <file_name>             - save contact in a file (contacts.xml by default).");
+            Console.WriteLine("load <file_name>             - load contact from a file (contacts.xml by default).");
+            Console.WriteLine("clear                        - clear the screen.");
+            Console.WriteLine("quit | exit                  - quitter.");
+            Console.WriteLine("help                         - show this message.");
         }
 
         private void RunCommand(string[] command, CMOperation operation, string errorMessage)
@@ -112,6 +112,22 @@ namespace ContactManager
             {
                 Console.WriteLine("Error: require 6 arguments arguments:");
                 Console.WriteLine("\tnew name firstName mail comapany LINK");
+            }
+        }
+
+        private void RunRm(string[] command)
+        {
+            if (command.Length == 2)
+            {
+                manager.RemoveElement(command[1]);
+            }
+            else if (command.Length == 3)
+            {
+                manager.RemoveElement(command[1], command[2]);
+            }
+            else
+            {
+                Console.WriteLine("Error: you must specify a contact or a folder to remove.");
             }
         }
 

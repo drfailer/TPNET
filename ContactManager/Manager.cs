@@ -74,16 +74,51 @@ namespace ContactManager
             }
         }
 
-        // TODO
-        public void EditContact(string contactName)
+        // edition d'un contact
+        public void EditContact(string name, string firstName)
         {
-            throw new NotImplementedException();
+            string newName;
+            string newFirstName;
+            string newMail;
+            string newCompany;
+            string newLink;
+            
+            Console.Write("Hit <RET> to keep the original.");
+            Console.Write("new name: ");
+            newName = Console.ReadLine();
+
+            Console.Write("new firstname: ");
+            newFirstName = Console.ReadLine();
+
+            Console.Write("new mail: ");
+            newMail = Console.ReadLine();
+
+            Console.Write("new company: ");
+            newCompany = Console.ReadLine();
+
+            Console.Write("new link: ");
+            newLink = Console.ReadLine();
+
+            try
+            {
+                CurrentFolder.EditElement(name, firstName, newName, newFirstName, newMail, newCompany, newLink);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("ERROR: impossible to edit contact: " + e.Message);
+            }
         }
 
-        // TODO: remove a contact or a folder (recursive !)
+        // suppression d'un sous fichier (recursif)
         public void RemoveElement(string name)
         {
-            throw new NotImplementedException();
+            CurrentFolder.RemoveChild(name);
+        }
+
+        // suppression d'un contact
+        public void RemoveElement(string name, string firstname)
+        {
+            CurrentFolder.RemoveChild(name, firstname);
         }
 
         /*****************************************************************************/
@@ -91,7 +126,7 @@ namespace ContactManager
 
         public void LoadFile(string key)
         {
-            LoadFile("contacts.xml", key);
+            LoadFile("contacts.xml", key); // fichier par defaut
         }
 
         public void LoadFile(string fileName, string key)
