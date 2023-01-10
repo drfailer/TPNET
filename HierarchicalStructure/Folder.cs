@@ -18,36 +18,39 @@ namespace HierarchicalStructure
     [Serializable()]
     public class Folder : Node, ISerializable
     {
-        private List<Node> _childs;
+        public List<Folder> SubFolders { get; set; }
+        public List<Contact> Contacts { get; set; }
         private string _name;
         public string     Name   { get { return _name; }    set { base.UpdateModificationDate(); _name = value; } }
-        public List<Node> Childs {  get { return _childs; } set { _childs = value; } }
 
         /*****************************************************************************/
         public Folder(string name, Folder parent) : base(parent)
         {
-            _childs = new List<Node>();
+            SubFolders = new List<Folder>();
+            Contacts = new List<Contact>();
             this.Name = name;
         }
 
         public Folder(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             _name = (string)info.GetValue("Name", typeof(string));
-            _childs = (List<Node>)info.GetValue("childs", typeof(List<Node>));
+            Contacts = (List<Contact>)info.GetValue("contacts", typeof(List<Contact>));
+            SubFolders = (List<Folder>)info.GetValue("subFolders", typeof(List<Folder>));
         }
 
         public Folder() : base(null) { }
 
         /*****************************************************************************/
-        /* Ajout des dossier et des contactes:
+        /* Ajout et suppression des dossier et des contactes:
          * Les contactes sont en debut de liste et le dossier en fin de liste pour rendre l'afficage avec `Show` plus clair
          */
 
         public void AddChild(string name)
         { // ajout d'un dossier si le nom est libre
-            if (_childs.Find(x => x.GetType() == typeof(Folder) && ((Folder)x).Name == name) == null)
+            if (SubFolders.Find(x => x.Name == name) == null)
             {
-                _childs.Add(new Folder(name, this));
+                SubFolders.Add(new Folder(name, this));
+                base.UpdateModificationDate();
             }
             else
             {
@@ -57,7 +60,25 @@ namespace HierarchicalStructure
 
         public void AddChild(string name, string firstName, string mail, string company, string link)
         {
-            _childs.Insert(0, new Contact(name, firstName, mail, company, link, this));
+            if (Contacts.Find(x => x.Name == name && x.FirstName == firstName) == null)
+            { // ajout si nom libre
+                Contacts.Add(new Contact(name, firstName, mail, company, link, this));
+                base.UpdateModificationDate();
+            }
+            else
+            {
+                throw new InvalidOperationException(name + " " + firstName + " already exists.");
+            }
+        }
+
+        public void RemoveChild(string name)
+        {
+            // TODO
+        }
+
+        public void RemoveChild(string name, string firstName)
+        {
+
         }
 
         /*****************************************************************************/
@@ -72,7 +93,7 @@ namespace HierarchicalStructure
         {
             try
             {
-                return (Folder)_childs.FindAll(x => x.GetType() == typeof(Folder) && ((Folder)x).Name == name).First();
+                return SubFolders.FindAll(x => x.Name == name).First();
             }
             catch (ArgumentNullException e)
             {
@@ -94,7 +115,8 @@ namespace HierarchicalStructure
         {
             base.PrettyPrintBar(n);
             Console.WriteLine("\u250C " + this.ToString());
-            _childs.ForEach(x => { x.PrettyPrint(n + 1); });
+            SubFolders.ForEach(x => { x.PrettyPrint(n + 1); });
+            Contacts.ForEach(x => { x.PrettyPrint(n + 1); });
             base.PrettyPrintBar(n);
             Console.WriteLine("\u2514\u2500\u2500");
         }
@@ -103,7 +125,13 @@ namespace HierarchicalStructure
         public void ListContent()
         {
             Console.WriteLine(this.ToString());
-            _childs.ForEach(x => Console.WriteLine(x.ToString()));
+            SubFolders.ForEach(x =>
+            {
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine(x.Name);
+                Console.ForegroundColor = ConsoleColor.Gray;
+            });
+            Contacts.ForEach(x => Console.WriteLine(x.ToString()));
         }
 
         /*****************************************************************************/
@@ -119,23 +147,19 @@ namespace HierarchicalStructure
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("Name", Name);
-            info.AddValue("childs", _childs);
+            info.AddValue("contacts", Contacts);
+            info.AddValue("subFolders", SubFolders);
             base.GetObjectData(info, context);
         }
 
+        // mise à jour des pere pour la deserialisation xml
         public void UpdateParent()
         {
-            _childs.ForEach(n =>
+            Contacts.ForEach(x => x.Parent = this);
+            SubFolders.ForEach(x =>
             {
-                if (n.GetType() == typeof(Contact))
-                {
-                    n.UpdateParent(this);
-                }
-                else
-                {
-                    n.UpdateParent(this);
-                    ((Folder)n).UpdateParent();
-                }
+                x.Parent = this; // Node
+                x.UpdateParent(); // Folder
             });
         }
     }

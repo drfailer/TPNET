@@ -20,7 +20,7 @@ namespace HierarchicalStructure
         protected DateTime CreationDate { get { return _creationDate; } }
         protected DateTime ModificationDate { get { return _modificationDate; } }
         [XmlIgnore]
-        protected Folder Parent { get; set; }
+        public Folder Parent { get; set; }
         public string NodeID { get; set; }
         // NOTE: je considère que le nom d'une personne est différent d'un Nom
         // de dossier (même nom, même type mais c'est pas vraiment la même chose
@@ -53,6 +53,7 @@ namespace HierarchicalStructure
 
         public abstract void PrettyPrint(int n);
 
+        // affiche les barres pour la commande tree
         protected void PrettyPrintBar(int n)
         {
             for (int i = 0; i < n; ++i)
@@ -69,17 +70,13 @@ namespace HierarchicalStructure
         }
 
         /*****************************************************************************/
+        /* Fonction pour la sérialisation */
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("creationDate", _creationDate);
             info.AddValue("modificationDate", _modificationDate);
             info.AddValue("parent", Parent);
-        }
-
-        public void UpdateParent(Folder parent)
-        {
-            Parent = parent;
         }
     }
 }

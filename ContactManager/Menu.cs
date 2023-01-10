@@ -67,6 +67,7 @@ namespace ContactManager
             }
             else
             {
+                Console.WriteLine("No file secified, a default file will be chosen !");
                 manager.LoadFile(key);
             }
         }
@@ -122,7 +123,9 @@ namespace ContactManager
 
             while (run)
             {
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.Write("cm> ");
+                Console.ForegroundColor = ConsoleColor.Gray;
                 command = Console.ReadLine().Split(' ');
 
                 switch (command[0])

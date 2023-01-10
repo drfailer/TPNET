@@ -29,7 +29,7 @@ namespace ContactManager
             {
                 CurrentFolder.AddChild(name);
             }
-            catch (InvalidOperationException e)
+            catch (Exception e)
             {
                 Console.WriteLine(e);
             }
@@ -37,7 +37,14 @@ namespace ContactManager
 
         public void AddContact(string name, string firstName, string mail, string company, string link)
         {
-            CurrentFolder.AddChild(name, firstName, mail, company, link);
+            try
+            {
+                CurrentFolder.AddChild(name, firstName, mail, company, link);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         /*****************************************************************************/
@@ -87,7 +94,7 @@ namespace ContactManager
             LoadFile("contacts.xml", key);
         }
 
-        public void LoadFile(string fileName, string key) // todo: error handeling
+        public void LoadFile(string fileName, string key)
         {
             try
             {
@@ -107,10 +114,10 @@ namespace ContactManager
 
         public void SaveFile(string key)
         {
-            SaveFile("contacts.xml", key);
+            SaveFile("contacts.xml", key); // fichier par defaut
         }
 
-        public void SaveFile(string fileName, string key) // todo: error handeling
+        public void SaveFile(string fileName, string key)
         {
             try
             {

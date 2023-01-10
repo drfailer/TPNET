@@ -96,7 +96,7 @@ namespace Serializer
             {
                 aes.Key = key;
 
-                using (FileStream fs = File.Open(@"C:\Users\Megaport\Documents\" + fileName, FileMode.Create))
+                using (FileStream fs = File.Open(@"C:\Users\rechassagn1\Documents\" + fileName, FileMode.Create))
                 {
                     fs.Write(aes.IV, 0, aes.IV.Length); // sauvegarde du vecteur d'initialisation en debut de fichier
                     using (CryptoStream csEncrypt = new CryptoStream(fs, aes.CreateEncryptor(), CryptoStreamMode.Write))
@@ -115,7 +115,7 @@ namespace Serializer
             {
                 aes.Key = key;
 
-                using (FileStream fs = File.Open(@"C:\Users\Megaport\Documents\" + fileName, FileMode.Open))
+                using (FileStream fs = File.Open(@"C:\Users\rechassagn1\Documents\" + fileName, FileMode.Open))
                 {
                     // récupération du vecteur d'initialisation utilisé au chiffrement
                     byte[] buff = new byte[aes.IV.Length];
@@ -144,7 +144,6 @@ namespace Serializer
             Folder root;
             BinaryFormatter bf = new BinaryFormatter();
             root = (Folder)bf.Deserialize(cs);
-            // root.UpdateParent();
             return root;
         }
 
