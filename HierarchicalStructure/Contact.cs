@@ -27,16 +27,19 @@ namespace HierarchicalStructure
         private string _company;
         private Links _link;
 
-        public string Name      { get { return _name; }      set { base.UpdateModificationDate(); _name = value; } }
+        public string Name { get { return _name; } set { base.UpdateModificationDate(); _name = value; } }
         public string FirstName { get { return _firstName; } set { base.UpdateModificationDate(); _firstName = value; } }
-        public string Mail      { get { return _mail; }      set { _mail = ValidateMail(value); } }
-        public string Company   { get { return _company; }   set { base.UpdateModificationDate(); _company = value; } }
-        public Links  Link      { get { return _link; }      set { base.UpdateModificationDate(); _link = value; } }
+        public string Mail { get { return _mail; } set { _mail = ValidateMail(value); } }
+        public string Company { get { return _company; } set { base.UpdateModificationDate(); _company = value; } }
+        public Links Link { get { return _link; } set { base.UpdateModificationDate(); _link = value; } }
 
         /*****************************************************************************/
 
         public Contact(string name, string firstName, string mail, string company, string link, Folder parent) : base(parent)
         {
+            if (name.Length == 0 || firstName.Length == 0) // vérfication nom valide
+                throw new InvalidOperationException("Error: you must specify a correct name.");
+
             _name = name;
             _firstName = firstName;
             _company = company;
@@ -54,7 +57,7 @@ namespace HierarchicalStructure
         }
 
         // constructeur pour deserialisation
-        public Contact(SerializationInfo info, StreamingContext context): base(info, context)
+        public Contact(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             _name = (string)info.GetValue("Name", typeof(string));
             _firstName = (string)info.GetValue("firstName", typeof(string));

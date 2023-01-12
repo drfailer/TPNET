@@ -131,6 +131,18 @@ namespace ContactManager
             }
         }
 
+        private void RunEdit(string[] command)
+        {
+            if (command.Length == 2)
+            {
+                manager.EditFolder(command[1]);
+            }
+            else if (command.Length == 3)
+            {
+                manager.EditContact(command[1], command[2]);
+            }
+        }
+
         public void Run()
         {
             manager = new Manager();
@@ -165,10 +177,10 @@ namespace ContactManager
                         RunNew(command);
                         break;
                     case "edit":
-                        RunCommand(command, manager.EditContact, "Error: you must specify the name of an existing contact.");
+                        RunEdit(command);
                         break;
                     case "rm":
-                        RunCommand(command, manager.RemoveElement, "Error: you must specify the name of an existing contact.");
+                        RunRm(command);
                         break;
                     case "save":
                         RunSave(command);

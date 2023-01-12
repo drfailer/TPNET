@@ -26,6 +26,8 @@ namespace HierarchicalStructure
         /*****************************************************************************/
         public Folder(string name, Folder parent) : base(parent)
         {
+            if (name.Length == 0)
+                throw new InvalidOperationException("Error: you must specify a valid name");
             SubFolders = new List<Folder>();
             Contacts = new List<Contact>();
             this.Name = name;
@@ -79,7 +81,7 @@ namespace HierarchicalStructure
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                throw new InvalidOperationException(e.Message);
             }
         }
 
@@ -91,7 +93,7 @@ namespace HierarchicalStructure
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                throw new InvalidOperationException(e.Message);
             }
         }
 
@@ -99,17 +101,38 @@ namespace HierarchicalStructure
         public void EditElement(string originalName, string originalFirstName,
             string name, string firstName, string mail, string company, string link)
         {
-            Contact contact = Contacts.Find(x => x.Name == originalFirstName && x.FirstName == originalFirstName);
-            if (name.Length != 0)
-                contact.Name = name;
-            if (firstName.Length != 0)
-                contact.FirstName = firstName;
-            if (mail.Length != 0)
-                contact.Mail = mail;
-            if (company.Length != 0)
-                contact.Company = company;
-            if (link.Length != 0)
-                contact.Link = Contact.ToLinks(link);
+            Contact contact = Contacts.Find(x => x.Name == originalName && x.FirstName == originalFirstName);
+            if (contact == null)
+            {
+                throw new InvalidOperationException("impossible to change: " + originalName + " " + originalFirstName);
+            }
+            else
+            {
+                if (name.Length != 0)
+                    contact.Name = name;
+                if (firstName.Length != 0)
+                    contact.FirstName = firstName;
+                if (mail.Length != 0)
+                    contact.Mail = mail;
+                if (company.Length != 0)
+                    contact.Company = company;
+                if (link.Length != 0)
+                    contact.Link = Contact.ToLinks(link);
+            }
+        }
+
+        // permet de changer le nom d'un dossier
+        public void EditElement(string originalName, string newName)
+        {
+            Folder folder = SubFolders.Find(x => x.Name == originalName);
+            if (folder == null)
+            {
+                throw new InvalidOperationException("Error: impossible to change the name of: " + originalName);
+            }
+            else
+            {
+                folder.Name = newName;
+            }
         }
 
         /*****************************************************************************/
@@ -126,15 +149,9 @@ namespace HierarchicalStructure
             {
                 return SubFolders.FindAll(x => x.Name == name).First();
             }
-            catch (ArgumentNullException e)
+            catch (Exception e)
             {
-                Console.WriteLine(e.Message);
-                throw new InvalidOperationException(name + " is not a valid folder name."); 
-            }
-            catch (InvalidOperationException e)
-            {
-                Console.WriteLine(e.Message);
-                throw new InvalidOperationException(name + " is not a valid folder name."); 
+                throw new InvalidOperationException("Error: " + name + " does not exist."); 
             }
         }
 

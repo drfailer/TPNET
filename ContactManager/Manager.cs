@@ -68,7 +68,7 @@ namespace ContactManager
             {
                 CurrentFolder = CurrentFolder.GetSubFolder(name);
             }
-            catch (InvalidOperationException e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
@@ -83,7 +83,7 @@ namespace ContactManager
             string newCompany;
             string newLink;
             
-            Console.Write("Hit <RET> to keep the original.");
+            Console.WriteLine("Hit <RET> to keep the original.");
             Console.Write("new name: ");
             newName = Console.ReadLine();
 
@@ -105,20 +105,51 @@ namespace ContactManager
             }
             catch (Exception e)
             {
-                Console.WriteLine("ERROR: impossible to edit contact: " + e.Message);
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        public void EditFolder(string name)
+        {
+            string newName;
+
+            Console.Write("new name: ");
+            newName = Console.ReadLine();
+
+            try
+            {
+                CurrentFolder.EditElement(name, newName);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
             }
         }
 
         // suppression d'un sous fichier (recursif)
         public void RemoveElement(string name)
         {
-            CurrentFolder.RemoveChild(name);
+            try
+            {
+                CurrentFolder.RemoveChild(name);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         // suppression d'un contact
         public void RemoveElement(string name, string firstname)
         {
-            CurrentFolder.RemoveChild(name, firstname);
+            try
+            {
+                CurrentFolder.RemoveChild(name, firstname);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         /*****************************************************************************/

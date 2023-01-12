@@ -89,6 +89,7 @@ namespace Serializer
 
         /*****************************************************************************/
         // Sérialisation et deserialisation sécurisée
+        // Les fichiers sont localisés dans "Documents"
 
         private void SecureSerialize(Folder root, string fileName, byte[] key, SerializeMethod serializer)
         {
@@ -96,7 +97,7 @@ namespace Serializer
             {
                 aes.Key = key;
 
-                using (FileStream fs = File.Open(@"C:\Users\rechassagn1\Documents\" + fileName, FileMode.Create))
+                using (FileStream fs = File.Open(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + fileName, FileMode.Create))
                 {
                     fs.Write(aes.IV, 0, aes.IV.Length); // sauvegarde du vecteur d'initialisation en debut de fichier
                     using (CryptoStream csEncrypt = new CryptoStream(fs, aes.CreateEncryptor(), CryptoStreamMode.Write))
@@ -115,7 +116,7 @@ namespace Serializer
             {
                 aes.Key = key;
 
-                using (FileStream fs = File.Open(@"C:\Users\rechassagn1\Documents\" + fileName, FileMode.Open))
+                using (FileStream fs = File.Open(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + fileName, FileMode.Open))
                 {
                     // récupération du vecteur d'initialisation utilisé au chiffrement
                     byte[] buff = new byte[aes.IV.Length];
