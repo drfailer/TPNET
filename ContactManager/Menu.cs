@@ -16,20 +16,20 @@ namespace ContactManager
         private void DisplayHelpMenu()
         {
             Console.Clear();
-            Console.WriteLine("---------------------------- Contact Manager ----------------------------");
-            Console.WriteLine("ls                           - list folder content.");
-            Console.WriteLine("tree                         - list all the hierarchy.");
-            Console.WriteLine("cd <folder_name>             - change folder.");
-            Console.WriteLine("up                           - go in the parent folder.");
-            Console.WriteLine("mkdir <folder_name>          - new folder folder.");
-            Console.WriteLine("new <contact info>           - add new contact (interative if no parameters given).");
-            Console.WriteLine("edit <name>                  - edit a contact or a folder.");
-            Console.WriteLine("rm <name>|<name> <firstname> - remove a contact or a folder.");
-            Console.WriteLine("save <file_name>             - save contact in a file (contacts.xml by default).");
-            Console.WriteLine("load <file_name>             - load contact from a file (contacts.xml by default).");
-            Console.WriteLine("clear                        - clear the screen.");
-            Console.WriteLine("quit | exit                  - quitter.");
-            Console.WriteLine("help                         - show this message.");
+            Console.WriteLine("----------------------------------- Contact Manager -----------------------------------");
+            Console.WriteLine("ls                               - list folder content.");
+            Console.WriteLine("tree                             - list all the hierarchy.");
+            Console.WriteLine("cd <folder_name>                 - change folder.");
+            Console.WriteLine("up                               - go in the parent folder.");
+            Console.WriteLine("mkdir <folder_name>              - new folder folder.");
+            Console.WriteLine("new <contact info>               - add new contact (interative if no parameters given).");
+            Console.WriteLine("edit <name> | <name> <firstName> - edit a contact or a folder.");
+            Console.WriteLine("rm <name>|<name> <firstname>     - remove a contact or a folder.");
+            Console.WriteLine("save <file_name>                 - save contact in a file (contacts.xml by default).");
+            Console.WriteLine("load <file_name>                 - load contact from a file (contacts.xml by default).");
+            Console.WriteLine("clear                            - clear the screen.");
+            Console.WriteLine("quit | exit                      - quitter.");
+            Console.WriteLine("help                             - show this message.");
         }
 
         // raccourcis pour execution de fonctions à 1 argument (avec message d'erreur si besoin)
