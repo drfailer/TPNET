@@ -118,7 +118,8 @@ namespace ContactManager
 
             try
             {
-                CurrentFolder.EditElement(name, newName);
+                if (newName.Length > 0)
+                    CurrentFolder.EditElement(name, newName);
             }
             catch (Exception e)
             {

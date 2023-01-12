@@ -12,6 +12,7 @@ namespace ContactManager
         private delegate void CMOperation(string name);
         Manager manager;
 
+        // help
         private void DisplayHelpMenu()
         {
             Console.Clear();
@@ -31,6 +32,7 @@ namespace ContactManager
             Console.WriteLine("help                         - show this message.");
         }
 
+        // raccourcis pour execution de fonctions à 1 argument (avec message d'erreur si besoin)
         private void RunCommand(string[] command, CMOperation operation, string errorMessage)
         {
             if (command.Length == 2)
@@ -43,6 +45,7 @@ namespace ContactManager
             }
         }
 
+        // sauvegarde de fichier (le type de fichier à utiliser est derterminé dans le manager via son extention)
         private void RunSave(string[] command)
         {
             Console.Write("key: ");
@@ -57,6 +60,7 @@ namespace ContactManager
             }
         }
 
+        // chargement de fichier (le type de fichier à utiliser est derterminé dans le manager via l'extention)
         private void RunLoad(string[] command)
         {
             Console.Write("key: ");
@@ -72,6 +76,7 @@ namespace ContactManager
             }
         }
 
+        // création d'un nouveau contact (inline ou interactif)
         private void RunNew(string[] command)
         {
             string name;
@@ -115,6 +120,7 @@ namespace ContactManager
             }
         }
 
+        // supression d'un contact ou d'un fichier
         private void RunRm(string[] command)
         {
             if (command.Length == 2)
@@ -131,6 +137,7 @@ namespace ContactManager
             }
         }
 
+        // edition d'un contact ou d'un fichier
         private void RunEdit(string[] command)
         {
             if (command.Length == 2)
@@ -143,6 +150,7 @@ namespace ContactManager
             }
         }
 
+        // fonction pricipale (fait tourner l'appli)
         public void Run()
         {
             manager = new Manager();

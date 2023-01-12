@@ -34,6 +34,7 @@ namespace HierarchicalStructure
         public Links Link { get { return _link; } set { base.UpdateModificationDate(); _link = value; } }
 
         /*****************************************************************************/
+        /* Constructeurs */
 
         public Contact(string name, string firstName, string mail, string company, string link, Folder parent) : base(parent)
         {
@@ -51,6 +52,8 @@ namespace HierarchicalStructure
             }
             catch (NonValidMailAddressException e)
             {
+                // Le mail peu être null donc pas de throw pour ne pas empêcher la création du nouveau client
+                // (par contre on spécifie tout de même à l'utilisateur que le mail est invalide).
                 Console.WriteLine("The given address is invalide, the field will be null.");
             }
             base.UpdateModificationDate();
@@ -66,6 +69,7 @@ namespace HierarchicalStructure
             _link = (Links)info.GetValue("link", typeof(Links));
         }
 
+        // constructeur vide pour deserialisation xml
         public Contact() : base(null) { }
 
         /*****************************************************************************/
@@ -90,6 +94,9 @@ namespace HierarchicalStructure
                     link = Links.Network;
                     break;
                 default:
+                    // on laisse None et on l'indique à l'utilisateur (l'appli ne doit
+                    // pas planter là, le fait de ne pas avoir une valeur correcte ne
+                    // doit pas empêcher l'ajout du nouveau contact => pas de throw)
                     Console.WriteLine("Error: invalid link, will be None bay default.");
                     break;
             }
@@ -112,13 +119,13 @@ namespace HierarchicalStructure
             }
             else
             {
-                outputAdress = _mail;
                 throw new NonValidMailAddressException("Error: \"{0}\" is not a valid mail address." + address);
             }
             return outputAdress;
         }
 
         /*****************************************************************************/
+        /* Fonctions d'affichages */
 
         public override void PrettyPrint(int n)
         {
@@ -136,6 +143,7 @@ namespace HierarchicalStructure
         /*****************************************************************************/
         // sérialisation
 
+        // #ISerializable
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("Name", Name);
@@ -145,6 +153,5 @@ namespace HierarchicalStructure
             info.AddValue("link", Link);
             base.GetObjectData(info, context);
         }
-
     }
 }

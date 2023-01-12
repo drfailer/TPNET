@@ -19,9 +19,8 @@ namespace HierarchicalStructure
 
         protected DateTime CreationDate { get { return _creationDate; } }
         protected DateTime ModificationDate { get { return _modificationDate; } }
-        [XmlIgnore]
+        [XmlIgnore] // la sérialisation xml gère mal le parent
         public Folder Parent { get; set; }
-        public string NodeID { get; set; }
         // NOTE: je considère que le nom d'une personne est différent d'un Nom
         // de dossier (même nom, même type mais c'est pas vraiment la même chose
         // puisqu'un nom de personne ne sert à rien sans le prenom). Donc je ne
@@ -33,8 +32,6 @@ namespace HierarchicalStructure
             _modificationDate = DateTime.Now;
             Parent = parent;
         }
-
-        // protected Node() { }
 
         protected Node(SerializationInfo info, StreamingContext context)
         {
@@ -72,6 +69,7 @@ namespace HierarchicalStructure
         /*****************************************************************************/
         /* Fonction pour la sérialisation */
 
+        // #ISerializable
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("creationDate", _creationDate);

@@ -24,6 +24,8 @@ namespace HierarchicalStructure
         public string Name { get { return _name; } set { base.UpdateModificationDate(); _name = value; } }
 
         /*****************************************************************************/
+        /* Constucteurs */
+
         public Folder(string name, Folder parent) : base(parent)
         {
             if (name.Length == 0)
@@ -33,6 +35,7 @@ namespace HierarchicalStructure
             this.Name = name;
         }
 
+        // constructeur pour deserialisation
         public Folder(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             _name = (string)info.GetValue("Name", typeof(string));
@@ -40,6 +43,7 @@ namespace HierarchicalStructure
             SubFolders = (List<Folder>)info.GetValue("subFolders", typeof(List<Folder>));
         }
 
+        // constructeur pour deserialisation xml
         public Folder() : base(null) { }
 
         /*****************************************************************************/
@@ -47,6 +51,7 @@ namespace HierarchicalStructure
          * Les contactes sont en debut de liste et le dossier en fin de liste pour rendre l'afficage avec `Show` plus clair
          */
 
+        // Ajout d'un nouveau dossier
         public void AddChild(string name)
         { // ajout d'un dossier si le nom est libre
             if (SubFolders.Find(x => x.Name == name) == null)
@@ -60,6 +65,7 @@ namespace HierarchicalStructure
             }
         }
 
+        // Ajout d'un nouveau contact
         public void AddChild(string name, string firstName, string mail, string company, string link)
         {
             if (Contacts.Find(x => x.Name == name && x.FirstName == firstName) == null)
@@ -73,29 +79,20 @@ namespace HierarchicalStructure
             }
         }
 
+        // Suppression d'un dossier (throws ArgumentNullException)
         public void RemoveChild(string name)
         {
-            try
-            {
-                SubFolders.RemoveAll(x => x.Name == name);
-            }
-            catch (Exception e)
-            {
-                throw new InvalidOperationException(e.Message);
-            }
+            SubFolders.RemoveAll(x => x.Name == name);
         }
 
+        // supperssion d'un contact (throws ArgumentNullException)
         public void RemoveChild(string name, string firstName)
         {
-            try
-            {
-                Contacts.RemoveAll(x => x.Name == name && x.FirstName == firstName);
-            }
-            catch (Exception e)
-            {
-                throw new InvalidOperationException(e.Message);
-            }
+            Contacts.RemoveAll(x => x.Name == name && x.FirstName == firstName);
         }
+
+        /*****************************************************************************/
+        /* Fonctions d'édition */
 
         // permet la modification d'un contact (les nouveau champs doivent être non vides)
         public void EditElement(string originalName, string originalFirstName,
@@ -138,11 +135,13 @@ namespace HierarchicalStructure
         /*****************************************************************************/
         /* Accessors */
 
+        // retourne le dossier parent
         public Folder GetParent()
         {
             return base.Parent;
         }
 
+        // retourne le dossier portant le nom `name`
         public Folder GetSubFolder(string name)
         {
             try
@@ -151,7 +150,7 @@ namespace HierarchicalStructure
             }
             catch (Exception e)
             {
-                throw new InvalidOperationException("Error: " + name + " does not exist."); 
+                throw new InvalidOperationException("Error: " + name + " does not exist.");
             }
         }
 
@@ -192,6 +191,7 @@ namespace HierarchicalStructure
         /*****************************************************************************/
         // sérialisation
 
+        // #ISerializable
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("Name", Name);
